@@ -3,7 +3,8 @@ import './Sidebar.css';
 
 
 import db from '../Firebase/Firebase';
-
+import SidebarChat from './SidebarChat/SidebarChat';
+import { useStateValue } from '../StateProvider';
 
 import {Avatar,IconButton} from '@material-ui/core';
 import DonutLargeIcon from '@material-ui/icons/DonutLarge'
@@ -12,10 +13,9 @@ import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { SearchOutlined } from '@material-ui/icons';
 
 
-import SidebarChat from './SidebarChat/SidebarChat';
 const Sidebar = () => {
 
-
+    const [{user},dispatch] = useStateValue();
     const [rooms,setRooms] = useState([]);
 
 useEffect(()=>{
@@ -30,7 +30,7 @@ useEffect(()=>{
     return (
         <div className="sidebar">
             <div className="sidebar__header">
-                <Avatar />
+                <Avatar src={user.photoURL}/>
                 <div className="sidebar__headerRight">
                     <IconButton>
                     <DonutLargeIcon />

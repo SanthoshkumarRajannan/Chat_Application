@@ -14,23 +14,40 @@ import {useParams} from 'react-router-dom';
 
 
 import db from '../Firebase/Firebase';
+import { useStateValue } from '../StateProvider';
+import firebase from 'firebase';
 const Chat = () => {
 
     const [seed ,setSeed]=useState("");
     const [input, setInput] = useState("");
     const {roomId} = useParams();
     const [roomName,setRoomName] = useState("");
+    const [messages,setMessages] =useState([]);
+    const [{user},dispatch] =useStateValue();
 
     useEffect (()=>{
         if(roomId){
+        
             db.collection("rooms").doc(roomId).
-            onSnapshot(snapshot => (
-                setRoomName(snapshot.data().name)
-            ))
+            onSnapshot((snapshot) => 
+                setRoomName(snapshot.data().name));
+                
+
+            db.collection("rooms")
+            .doc(roomId)
+            .collection("messages")
+            .orderBy("timestamp","asc")
+            .onSnapshot((snapshot)=>
+            setMessages(snapshot.docs.map((doc) =>doc.data()))
+            );
         }
+        
+        console.log("messages",messages);
+
+   
     },[roomId]);
 
-
+   
     useEffect(()=>{
         setSeed(Math.floor(Math.random() * 5000));
     },[roomId]);
@@ -38,8 +55,18 @@ const Chat = () => {
     const sendMessage =(e)=> {
 e.preventDefault();
 console.log("you typed",input);
+
+db.collection('rooms').doc(roomId).collection("messages")
+.add({
+    message :input,
+    name : user.displayName,
+    timestamp : firebase.firestore.FieldValue.serverTimestamp(),
+
+});
+console.log("input data",input,user.displayName,firebase.firestore.FieldValue.serverTimestamp());
 setInput("");
     }
+   
     return (
         <div className="chat">
             <div className="chat__header">
@@ -64,12 +91,17 @@ setInput("");
             </div>
 
             <div className="chat__body">
-                <p className={`chat__message ${true && "chat__reciever"}`}>
-                <span className="chat__name">Santhoshkumar</span>
-                    hey guys
-                    <span className="chat__timestamp">3:52 pm</span>
-                </p>
+                {messages.map((message) =>(
              
+                    <p className={`chat__message ${message.name === user.displayName && "chat__reciever"}`}>
+                    <span className="chat__name">{message.name}</span>
+                       {message.message}
+                        <span className="chat__timestamp">
+
+                            { message.timestamp !==null && new Date(message.timestamp.toDate()).toLocaleTimeString()}
+                        </span>
+                    </p>
+                ))}
             </div>
 
             <div className="chat__footer">
