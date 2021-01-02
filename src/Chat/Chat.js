@@ -42,12 +42,12 @@ const Chat = () => {
             );
         }
         
-        console.log("messages",messages);
+        
 
    
     },[roomId]);
 
-   
+    console.log("messages",messages);
     useEffect(()=>{
         setSeed(Math.floor(Math.random() * 5000));
     },[roomId]);
@@ -73,7 +73,17 @@ setInput("");
               <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
                <div className="chat__headerInfo">
                    <h3>{roomName}</h3>
-                   <p>Last Seen.....</p>
+                   {/* <p>Last Seen at {" "}
+                   {new Date(
+                       messages[messages.length -1]?.timestamp?.toDate()
+                   ).toLocaleTimeString()}
+                    
+                   </p> */}
+                   {/* <p>
+                       last seen at{" "}
+                       { (messages.timestamp !==null && messages.length != null ) &&  new Date(messages[0].timestamp.toDate()).toLocaleTimeString()}
+                   </p> */}
+                  
                </div>
                <div className="chat__headerRight">
                           <IconButton>
