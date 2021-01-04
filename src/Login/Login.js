@@ -13,15 +13,23 @@ const Login = () => {
     const signIn =()=>{
        auth.signInWithPopup(provider)
            .then((result) => {
-            
+            console.log("authdata",result.user.uid);
                dispatch({
                   
                    type : actionTypes.SET_USER,
                    user : result.user,
                })
+
+               const datalogin =[];
+               datalogin.push(result.user.uid);
+               console.log("datalogin",datalogin);
+               localStorage.setItem('Authdata',datalogin);
+
+
            })
            .catch((error) => alert(error.message));
     }
+   
     return (
         <div className="login">
           <div className="login__container">
