@@ -15,11 +15,12 @@ function SidebarChat({id,name,addNewChat}) {
 const history=useHistory();
     const [seed ,setSeed]=useState("");
     const [messages,setMessages] = useState("");
-
+   const [ID,setID] =useState(id);
     const [deleteAlert,setDeleteAlert] =useState(false);
     const [modalState, setModalState] = useState(false);
     const [modalId, setModalId] = useState();
     const [newRoom,setNewRoom]= useState("");
+    const[count,setCount]=useState(0);
     const ModalCancelHandler = () => {
       setModalState(false);
       setModalId();
@@ -43,9 +44,8 @@ const history=useHistory();
 
 
         }
-    },[id]);
-    console.log("messagefrom thejldhfugyr userver",messages[0]);
-//console.log("sidebarmesssage",messages);
+    },[id,count]);
+   
     useEffect(()=>{
         setSeed(Math.floor(Math.random() * 5000));
     },[]);
@@ -61,7 +61,8 @@ const history=useHistory();
         setModalState(false);
         setModalId(false);
       
-        
+          
+            
        e.preventDefault();
         setNewRoom("");
     }
@@ -74,18 +75,15 @@ const history=useHistory();
     }
 
     const deleteRoom=(id)=>{
-        history.push('/');
-        console.log("roomIdfor delete",id);
+       setCount(prevState=>prevState+1);
+    setID("");
  db.collection("rooms").doc(id).delete();
+ 
 
            
     }
   
-    // let DeleteRoom="";
-    // if(deleteAlert){
-    //     DeleteRoom=(<p  onClick={deleteRoom(`${id}`)}>DELETE ROOM</p>)
-    // }
-  
+
     return !addNewChat ? ( 
 
         
@@ -96,16 +94,7 @@ const history=useHistory();
                 <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
                 <div className="sidebarChat__info">
                     <h2>{name}</h2>
-                {/* <p>{messages[0] !==undefined ? messages[0] === null && messages[0] :""}</p>  */}
-                  {/* <div className="sidebarChat__infoDetails">
-                  <h1>{messages[0] !==undefined && messages[0] !== null ? messages[0].message :""}</h1> 
-
-                    <p>{messages[0] !==undefined && 
-                    messages[0] !== null && 
-                    messages[0].timestamp !==null ?
-                     new Date(messages[0].timestamp.toDate()).toLocaleTimeString() 
-                     :""}</p>
-                  </div> */}
+              
 
 <div className="sidebarChat__infoDetails">
                   <h1>{messages[0] !==undefined && messages[0] !== null ?messages[0].message.length <15 ? messages[0].message : messages[0].message.substring(0,14)+"...." :""}</h1> 

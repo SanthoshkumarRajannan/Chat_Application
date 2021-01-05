@@ -21,27 +21,28 @@ const Chat = () => {
     const [seed ,setSeed]=useState("");
     const [input, setInput] = useState("");
     const {roomId} = useParams();
+
     const [roomName,setRoomName] = useState("");
     const [messages,setMessages] =useState([]);
     const [{user},dispatch] =useStateValue();
     const [profileimgage,setProfileimage]=useState("");
+    const [clearToggle,setClearToggle]=useState(false);
+    // const useStyles = makeStyles((theme) => ({
+    //     root: {
+    //         '&.active, &:hover, &.active:hover':{
+    //           color:"transparent",
+    //          boxShadow:"none",
+    //           border:"none",
+    //           outline:"none"
+    //       }
+    //     },
+    //     input: {
+    //       display: "none"
+    //     }
+    //   }));
 
-    const useStyles = makeStyles((theme) => ({
-        root: {
-            '&.active, &:hover, &.active:hover':{
-              color:"transparent",
-             boxShadow:"none",
-              border:"none",
-              outline:"none"
-          }
-        },
-        input: {
-          display: "none"
-        }
-      }));
 
-
-      const classes = useStyles();
+    //   const classes = useStyles();
 
 
     useEffect (()=>{
@@ -50,7 +51,7 @@ const Chat = () => {
             db.collection("rooms").doc(roomId).
             onSnapshot((snapshot) => 
                 setRoomName(snapshot.data().name));
-                
+    
 
             db.collection("rooms")
             .doc(roomId)
@@ -99,11 +100,26 @@ setInput("");
 //         console.log("profileimg",profileimg);
 //          db.collection('rooms').doc(roomId).collection("profile")
 // .add({
-//  userprofile :"hello",
-   
+//  userprofile :"hello",one minute ok bhai
+
 
 // });
 //     }
+
+const clearMessageToggle =()=>{
+    setClearToggle(!clearToggle);
+}
+const clearMessageHandler =(roomId)=>{
+     db.collection("rooms").doc(roomId).collection("messages").onSnapshot((snapshot) => 
+    snapshot.docs.map((doc) =>
+    db.collection("rooms").doc(roomId).collection(`messages`).doc(doc.id).delete()
+    
+    
+    ));
+
+        
+           
+}
     return (
         <div className="chat">
             <div className="chat__header">
@@ -150,8 +166,9 @@ setInput("");
                           </IconButton>
 
                           <IconButton>
-                              <MoreVert />
+                              <MoreVert onClick={clearMessageToggle}/>
                           </IconButton>
+                          {clearToggle ? <p onClick={()=>clearMessageHandler(roomId)}>clearChat</p>: ""}
                </div>
             </div>
 
