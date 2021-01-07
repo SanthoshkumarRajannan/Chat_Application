@@ -101,3 +101,13 @@ font-size: 24px;
     padding-left:10px;
     margin-right:0px;
 }
+
+.sidebar_delete > p{
+    background-color: #d2d2d2;
+    color: black;
+    padding:10px;
+    border-radius: 5px;
+    
+    margin-top: 10px;
+    cursor: pointer;
+}

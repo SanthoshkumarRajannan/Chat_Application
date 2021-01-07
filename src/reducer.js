@@ -1,3 +1,4 @@
+
 export const initialState = {
     user : null,
 };
@@ -17,6 +18,8 @@ const reducer = (state,action) =>{
 
             default :
             return state;
+
+            
     }
 };
 

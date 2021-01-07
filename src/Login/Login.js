@@ -13,7 +13,7 @@ const Login = () => {
     const signIn =()=>{
        auth.signInWithPopup(provider)
            .then((result) => {
-            console.log("authdata",result.user.uid);
+            console.log("authdata",result.user);
                dispatch({
                   
                    type : actionTypes.SET_USER,
@@ -21,9 +21,11 @@ const Login = () => {
                })
 
                const datalogin =[];
-               datalogin.push(result.user.uid);
-               console.log("datalogin",datalogin);
-               localStorage.setItem('Authdata',datalogin);
+              // const hey ="sfDFDF";
+               datalogin.push(result.user);
+               console.log("datalogin",datalogin[0].displayName);
+           const datavalue=[datalogin[0].photoURL,datalogin[0].displayName]
+               localStorage.setItem('Authdata',datavalue);
 
 
            })
@@ -33,9 +35,12 @@ const Login = () => {
     return (
         <div className="login">
           <div className="login__container">
-              <img  src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"/>
+              {/* <img  src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"/>
+              https://en.wikipedia.org/wiki/File:Chat_bubbles.svg */}
+              
+              <img  src="https://upload.wikimedia.org/wikipedia/commons/7/7f/Speech_bubble.svg" alt="" />
               <div className="login__text">
-                 <h1>Sign in to WhatsApp</h1>
+                 <h1>Sign in to Chat Application</h1>
               </div>
               <Button  onClick={signIn}>
                   Sign In with Google

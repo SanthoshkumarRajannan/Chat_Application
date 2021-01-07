@@ -26,7 +26,9 @@ const Chat = () => {
     const [messages,setMessages] =useState([]);
     const [{user},dispatch] =useStateValue();
     const [profileimgage,setProfileimage]=useState("");
-    const [clearToggle,setClearToggle]=useState(false);
+   // const [clearToggle,setClearToggle]=useState(false);
+
+
     // const useStyles = makeStyles((theme) => ({
     //     root: {
     //         '&.active, &:hover, &.active:hover':{
@@ -40,11 +42,10 @@ const Chat = () => {
     //       display: "none"
     //     }
     //   }));
-
-
     //   const classes = useStyles();
 
-
+    const isAuthdata=localStorage.getItem("Authdata");
+    const Auth=isAuthdata.split(",");
     useEffect (()=>{
         if(roomId){
         
@@ -76,47 +77,32 @@ console.log("you typed",input);
 db.collection('rooms').doc(roomId).collection("messages")
 .add({
     message :input,
-    name : user.displayName,
+    name : user != null ? user.displayName : Auth[1],
     timestamp : firebase.firestore.FieldValue.serverTimestamp(),
 
 });
 
-// db.collection('rooms').doc(roomId).collection("profile")
-// .add({
-//     userprofile :input,
-   
-
-// });
-
-
-console.log("input data",input,user.displayName,firebase.firestore.FieldValue.serverTimestamp());
 setInput("");
     }
-   
-
-//     const profilechangehandler =(e)=>{
-//         const profileimg= e.target.files;
-//         profileimg[0];
-//         console.log("profileimg",profileimg);
-//          db.collection('rooms').doc(roomId).collection("profile")
-// .add({
-//  userprofile :"hello",one minute ok bhai
 
 
-// });
-//     }
 
-const clearMessageToggle =()=>{
-    setClearToggle(!clearToggle);
-}
 const clearMessageHandler =(roomId)=>{
-     db.collection("rooms").doc(roomId).collection("messages").onSnapshot((snapshot) => 
-    snapshot.docs.map((doc) =>
-    db.collection("rooms").doc(roomId).collection(`messages`).doc(doc.id).delete()
+    //  db.collection("rooms").doc(roomId).collection("messages").onSnapshot((snapshot) => 
+    // snapshot.docs.map((doc) =>
+    // db.collection("rooms").doc(roomId).collection(`messages`).doc(doc.id).delete()
     
     
-    ));
+    // ));
+   
+       db.collection("rooms").doc(roomId).collection("messages").get()
+       .then(res =>{
+           res.forEach(element =>{
+               element.ref.delete();
+           });
+       });
 
+   
         
            
 }
@@ -125,28 +111,9 @@ const clearMessageHandler =(roomId)=>{
             <div className="chat__header">
             <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
 
-            {/* <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
-<label htmlFor="icon-button-file"   >
-   
-    
-<IconButton color="primary" aria-label="upload picture" component="span" style={{backgroundColor:"transparent",color:"white"}} ><Avatar /></IconButton> 
-
-</label>
-               */}
-              
-               <div className="chat__headerInfo">
+               <div className="chat__headerInfo" >
                    <h3>{roomName}</h3>
-                   {/* <p>Last Seen at {" "}
-                   {new Date(
-                      messages[messages.length -1] !=null ?  messages[messages.length -1].timestamp.toDate() :""
-                   ).toLocaleTimeString()}
-                    
-                   </p> */}
-                  
-                   {/* <p>Last Seen at {" "}
-                   {  messages[messages.length] > 0 ||  messages[messages.length -1] !=null && messages[messages.length -1].timestamp ? new Date(messages[messages.length -1].timestamp.toDate()).toLocaleTimeString : "hello"}
-                    
-                   </p> */}
+                   
 
                      <p>Last Seen at {" "}
                    {new Date(
@@ -166,16 +133,21 @@ const clearMessageHandler =(roomId)=>{
                           </IconButton>
 
                           <IconButton>
-                              <MoreVert onClick={clearMessageToggle}/>
+                              <MoreVert />
                           </IconButton>
-                          {clearToggle ? <p onClick={()=>clearMessageHandler(roomId)}>clearChat</p>: ""}
+                      
+                <p onClick={()=>clearMessageHandler(roomId)}>clearChat</p>
+             
+                          
                </div>
+              
+               
             </div>
 
             <div className="chat__body">
                 {messages.map((message) =>(
              
-                    <p className={`chat__message ${message.name === user.displayName && "chat__reciever"}`}>
+                    <p className={`chat__message ${message.name === (user !==null ? user.displayName : Auth[1]) && "chat__reciever"}`}>
                     <span className="chat__name">{message.name}</span>
                        {message.message}
                         <span className="chat__timestamp">

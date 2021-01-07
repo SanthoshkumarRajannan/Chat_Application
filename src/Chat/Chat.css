@@ -98,3 +98,19 @@
     padding: 10px;
     color: gray;
 }
+
+.chat__headerRight > P{
+    padding: 5px;
+    background-color: rgb(189, 181, 181);
+    height:20px;
+    color :rgb(255, 254, 254);
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+    width: 100px;
+    text-align: center;
+}
+
+.chat__headerRight > p:hover{
+    box-shadow: 0 2px 3px  rgb(112, 112, 112);
+}

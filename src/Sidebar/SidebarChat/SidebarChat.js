@@ -75,11 +75,19 @@ const history=useHistory();
     }
 
     const deleteRoom=(id)=>{
-       setCount(prevState=>prevState+1);
-    setID("");
- db.collection("rooms").doc(id).delete();
- 
 
+        console.log("history.location.pathname",history.location.pathname);
+        console.log("roomidvalue",`rooms/${id}`);
+     if(history.location.pathname !==`/rooms/${id}` )
+     {
+        db.collection("rooms").doc(id).delete();
+ 
+     }
+     else{
+         alert("Cannot Delete Present Chat Room");
+     }
+ 
+    
            
     }
   
@@ -93,7 +101,7 @@ const history=useHistory();
                 <div className="sidebarChat" > 
                 <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
                 <div className="sidebarChat__info">
-                    <h2>{name}</h2>
+                    <h2>{name.length <17 ? name : name.substring(0,17)+"..."}</h2>
               
 
 <div className="sidebarChat__infoDetails">
@@ -116,15 +124,15 @@ const history=useHistory();
 
            </div>
   
-      {/* <div className="sidebar_delete">
+      <div className="sidebar_delete">
       <IconButton>
             <MoreVertIcon onClick={showDeleteRoom} />
         </IconButton>
       
-          {deleteAlert ? <p onClick={()=>deleteRoom(`${id}`)}>Deleteroom</p> : " "}
+          {deleteAlert ? <p  onMouseOut={()=>{ setDeleteAlert(false)}} onClick={()=>deleteRoom(`${id}`)}>Deleteroom</p> : " "}
        
        
-      </div> */}
+      </div>
       
        </div>
 

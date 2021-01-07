@@ -11,13 +11,22 @@ import { useStateValue } from './StateProvider';
 const App=()=> {
   const [{ user} , dispatch] = useStateValue();
 
-
+//const [user,setLoginUser]=useState("");
   const isAuthdata= localStorage.getItem("Authdata");
-  console.log("isAuthdata",isAuthdata)
+   
+
+
+ 
+  //const user =userlogin;
+
+  //console.log("isAuthdata",isAuthdata)
     return (
       <div className="App">
-           
-        { !user ?  (
+           {/* {  datauser ==null && isAuthdata !=null ?  setLoginUser(isAuthdata)
+            : datauser !=null && isAuthdata ==null ? setLoginUser(datauser)
+             : datauser !=null && isAuthdata !=null ? setLoginUser(datauser)
+             : setLoginUser("") }   && !isAuthdata*/}
+        { !user && !isAuthdata ?  (
          <Login />
         ) : (
           <div className="App_Body">
