@@ -6,7 +6,8 @@ import MoreVertIcon from '@material-ui/icons/MoreVert'
 
 
 import db from '../../Firebase/Firebase';
-
+ import storageRef from '../../Firebase/Firebase';
+//import "firebase/storage";
 import{Link} from 'react-router-dom';
 
 import Modal from '../../Modal/Modal';
@@ -20,7 +21,11 @@ const history=useHistory();
     const [modalState, setModalState] = useState(false);
     const [modalId, setModalId] = useState();
     const [newRoom,setNewRoom]= useState("");
-    const[count,setCount]=useState(0);
+   
+    const [displayProfileImg,setdisplayProfileImg]=useState(""); 
+    const [profileImg, setProfileImg] = useState(null);
+    //const storage =firebase.storage();
+    
     const ModalCancelHandler = () => {
       setModalState(false);
       setModalId();
@@ -41,10 +46,18 @@ const history=useHistory();
             .onSnapshot((snapshot)=>
             setMessages(snapshot.docs.map((doc) =>doc.data()))
             );
+        
 
+            db.collection("rooms")
+            .doc(id)
+            .collection("profileimages")
+            .orderBy("timestamp","desc")
+            .onSnapshot((snapshot)=>
+            setdisplayProfileImg(snapshot.docs.map((doc) =>doc.data()))
+            );
 
         }
-    },[id,count]);
+    },[id]);
    
     useEffect(()=>{
         setSeed(Math.floor(Math.random() * 5000));
@@ -85,13 +98,13 @@ const history=useHistory();
      }
      else{
          alert("Cannot Delete Present Chat Room");
-     }
- 
-    
-           
+     }    
     }
   
-
+   const closeHandler=()=>{
+    setModalState(false);
+    setModalId(false);
+   }
     return !addNewChat ? ( 
 
         
@@ -99,7 +112,8 @@ const history=useHistory();
            <div className="sidebar_roomName">
            <Link to={`/rooms/${id}`} >
                 <div className="sidebarChat" > 
-                <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
+                <Avatar src={displayProfileImg[0] !== null && displayProfileImg[0] !== undefined ? displayProfileImg[0].ProfileImg : ""} />
+              
                 <div className="sidebarChat__info">
                     <h2>{name.length <17 ? name : name.substring(0,17)+"..."}</h2>
               
@@ -126,10 +140,10 @@ const history=useHistory();
   
       <div className="sidebar_delete">
       <IconButton>
-            <MoreVertIcon onClick={showDeleteRoom} />
+            <MoreVertIcon />
         </IconButton>
       
-          {deleteAlert ? <p  onMouseOut={()=>{ setDeleteAlert(false)}} onClick={()=>deleteRoom(`${id}`)}>Deleteroom</p> : " "}
+         
        
        
       </div>
@@ -147,9 +161,10 @@ const history=useHistory();
         </div>
         <Modal show={modalState} modalClosed={ModalCancelHandler}>
             <form  onSubmit={createChat} className="sidebar__addroom">
+                <p onClick={closeHandler}>&times;</p>
                 <h1>Add NewChat Room</h1>
                 <div className="forminput">
-                    <label>Enter Room Name:</label>
+                    <label>Room Name:</label>
                     <input type="text" value={newRoom}  onChange={(e)=>setNewRoom(e.target.value)} />
                    
                 </div>

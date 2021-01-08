@@ -1,5 +1,5 @@
 import firebase from 'firebase';
-
+import "firebase/storage";
 const firebaseConfig = {
   apiKey: "AIzaSyC5FInHX5Ep4DaMCyKnwkLvJOhdg0bBzTc",
   authDomain: "chat-application-react-project.firebaseapp.com",
@@ -15,7 +15,7 @@ const firebaseConfig = {
   const db = firebaseApp.firestore();
   const auth =firebase.auth();
   const provider = new firebase.auth.GoogleAuthProvider();
-
-
-  export {auth,provider};
+ const storageRef =firebase.storage().ref();
+ const storage =firebase.storage();
+  export {storage,storageRef,auth,provider};
   export default db;

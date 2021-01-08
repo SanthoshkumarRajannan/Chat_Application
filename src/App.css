@@ -12,3 +12,18 @@
   box-shadow: -1px 4px 20px -6px rgba(0,0,0,0.2);
   margin-top: -50px;
 }
+
+.AppDarkmode{
+  background-color: #f8f8f6;
+  height:100vh;
+  display:grid;
+  place-items: center;
+}
+.App_BodyDarkmode{
+  display: flex;
+  background-color: #070707;
+  height:90vh;
+  width: 90vw;
+  box-shadow: -1px 4px 20px -6px rgba(0,0,0,0.2);
+  margin-top: -50px;
+}

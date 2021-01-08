@@ -3,7 +3,7 @@ import './Login.css'
 
 import {Button} from '@material-ui/core'
 
-
+import LOGO from '.././Assets/Logo.png';
 import  {auth,provider} from '../Firebase/Firebase';
 import { useStateValue } from '../StateProvider';
 import { actionTypes } from '../reducer';
@@ -38,7 +38,8 @@ const Login = () => {
               {/* <img  src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"/>
               https://en.wikipedia.org/wiki/File:Chat_bubbles.svg */}
               
-              <img  src="https://upload.wikimedia.org/wikipedia/commons/7/7f/Speech_bubble.svg" alt="" />
+              {/* <img  src="https://upload.wikimedia.org/wikipedia/commons/7/7f/Speech_bubble.svg" alt="" /> */}
+              <img  src={LOGO} alt="" />
               <div className="login__text">
                  <h1>Sign in to Chat Application</h1>
               </div>

@@ -17,45 +17,58 @@ const Sidebar = () => {
     const [count,setCount]=useState(0);
     const [{user},dispatch] = useStateValue();
     const [rooms,setRooms] = useState([]);
+     const [filterRoom,setFilterRoom]=useState("");
 
     const [toogleLogout,setToggleLogout]=useState(false);
     const isAuthdata= localStorage.getItem("Authdata");
    const Auth=isAuthdata.split(",");
+  
+   const [searchRoom,setSearchRoom]=useState("");
 
 useEffect(()=>{
-      db.collection("rooms").onSnapshot((snapshot)=>
-            setRooms(snapshot.docs.map((doc) =>({
-                    id : doc.id,
-                    data :doc.data(),
-                }))
-                )
-        );
-        
-  },[count])
+    //   db.collection("rooms").onSnapshot((snapshot)=>
+    //         setRooms(snapshot.docs.map((doc) =>({
+    //                 id : doc.id,
+    //                 data :doc.data(),
+    //             }))
+    //             )
+    //     );
 
- const logOutToggleHandler =()=>{
-      setToggleLogout(!toogleLogout);
-      setCount(prevState=>prevState+1);
-      console.log("count",count);
-      
-  }
+    db.collection("rooms")
+    .orderBy("name","asc")
+    .onSnapshot((snapshot)=>
+    setRooms(snapshot.docs.map((doc) =>({
+            id : doc.id,
+            data :doc.data(),
+        }))
+        )
+); 
+        
+  },[])
 
  const logoutHandler =()=>{
      localStorage.setItem("Authdata","");
      window.location.reload(false);
  }
+
+
+ let userlist =rooms;
+    userlist = !searchRoom
+    ? rooms
+    : rooms.filter((room) =>
+        room.data.name.toLowerCase().includes(searchRoom.toLocaleLowerCase()) 
+       
+      );
+
+    
+ 
     return (
         <div className="sidebar">
             <div className="sidebar__header">
-                {/* <Avatar src={user !== null ? user.photoURL : isAuthdata[0].photoURL }/> */}
+              
                 
-                <Avatar className="profile" src={ user !=null ? user.photoURL : Auth[0]} alt=""  onClick={logOutToggleHandler} />
-                {toogleLogout ?
-             <p onMouseOut={()=>setToggleLogout(false)}
-             onClick={logoutHandler}>
-                 LOGOUT
-                 </p>
-                  :""}
+                <Avatar className="profile" src={ user !=null ? user.photoURL : Auth[0]} alt=""   />
+               
                 <div className="sidebar__headerRight">
                     <IconButton>
                     <DonutLargeIcon />
@@ -68,9 +81,17 @@ useEffect(()=>{
                     <IconButton>
                     <MoreVertIcon />
                     </IconButton>
-                  
+                    <button  className="logoutButton" onClick={logoutHandler}>
+                      LOGOUT
+                    </button>
                     
-                    
+                   
+            
+        
+    
+        
+     
+         
                 </div>
                
                 
@@ -82,12 +103,12 @@ useEffect(()=>{
             <div className="sidebar__search">
                   <div className="sidebar__searchContainer">
                       <SearchOutlined />
-                      <input placeholder="Search chat Room" type="text" />
+                      <input placeholder="Search chat Room" type="text"   value={searchRoom} onChange={(e)=>setSearchRoom(e.target.value)} />
                   </div>
             </div>
             <div className="sidebar__chats">
                <SidebarChat addNewChat/>
-               {rooms.map((room) => (
+               { userlist.map((room) => (
                    <SidebarChat  key={room.id} id={room.id} name={room.data.name}/>
                ))}
             </div>

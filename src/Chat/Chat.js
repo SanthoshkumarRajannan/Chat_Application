@@ -14,6 +14,9 @@ import {useParams} from 'react-router-dom';
 
 
 import db from '../Firebase/Firebase';
+import Modal from '../Modal/Modal';
+
+import {storage,storageRef} from  '../Firebase/Firebase';
 import { useStateValue } from '../StateProvider';
 import firebase from 'firebase';
 const Chat = () => {
@@ -25,25 +28,18 @@ const Chat = () => {
     const [roomName,setRoomName] = useState("");
     const [messages,setMessages] =useState([]);
     const [{user},dispatch] =useStateValue();
-    const [profileimgage,setProfileimage]=useState("");
-   // const [clearToggle,setClearToggle]=useState(false);
+   
+    const [displayProfileImg,setdisplayProfileImg]=useState("");
+    
+    const [profileImg, setProfileImg] = useState(null);
+    const [error, setError] = useState("");
+    const types = ["image/png", "image/jpeg"];
 
+    const [modalState, setModalState] = useState(false);
+    const [modalId, setModalId] = useState();
 
-    // const useStyles = makeStyles((theme) => ({
-    //     root: {
-    //         '&.active, &:hover, &.active:hover':{
-    //           color:"transparent",
-    //          boxShadow:"none",
-    //           border:"none",
-    //           outline:"none"
-    //       }
-    //     },
-    //     input: {
-    //       display: "none"
-    //     }
-    //   }));
-    //   const classes = useStyles();
-
+    const [profileToggle,setProfileToggle] = useState(false);
+    const[disableupload,setDisableUpload] =useState(true);
     const isAuthdata=localStorage.getItem("Authdata");
     const Auth=isAuthdata.split(",");
     useEffect (()=>{
@@ -61,18 +57,40 @@ const Chat = () => {
             .onSnapshot((snapshot)=>
             setMessages(snapshot.docs.map((doc) =>doc.data()))
             );
+
+            db.collection("rooms")
+            .doc(roomId)
+            .collection("profileimages")
+            .orderBy("timestamp","desc")
+            .onSnapshot((snapshot)=>
+            setdisplayProfileImg(snapshot.docs.map((doc) =>doc.data()))
+            );
+
+
         }
         
     },[roomId]);
-     console.log("profileimage",profileimgage);
+    // console.log("profileimage",profileimgage);
     console.log("messages",messages);
+    console.log("displayprofilepicture",displayProfileImg);
     useEffect(()=>{
         setSeed(Math.floor(Math.random() * 5000));
     },[roomId]);
 
+    const ModalCancelHandler = () => {
+        setModalState(false);
+        setModalId();
+      };
+    
+      const modal1=()=>{
+          setModalState(true);
+          setModalId(true);
+      }
+
+
     const sendMessage =(e)=> {
 e.preventDefault();
-console.log("you typed",input);
+
 
 db.collection('rooms').doc(roomId).collection("messages")
 .add({
@@ -84,6 +102,7 @@ db.collection('rooms').doc(roomId).collection("messages")
 
 setInput("");
     }
+
 
 
 
@@ -106,19 +125,114 @@ const clearMessageHandler =(roomId)=>{
         
            
 }
+
+
+const profileImgHandler = (e) => {
+    let selectedFile = e.target.files[0];
+    if (selectedFile && types.includes(selectedFile.type)) {
+      setProfileImg(selectedFile);
+      setError("");
+      setDisableUpload(false);
+
+    } else {
+      setProfileImg(null);
+      setError("Please select the valid image type png or jpeg");
+      alert("Please select the valid image type png or jpeg");
+      setDisableUpload(true);
+    }
+    if(selectedFile ===null){
+        setDisableUpload(true);
+    }
+  };
+
+const addProfile =(e)=>{
+    setModalState(false);
+        setModalId(false);
+    e.preventDefault();
+    console.log("profile",profileImg);
+    const userImage = profileImg;
+    console.log("USERIMAGE",userImage);
+    const uploadTask=storageRef.child(`user-images/${userImage.name}`).put(userImage);
+   // const uploadTask =storage.ref(`user-images/${userImage.name}`).put(userImage);
+    console.log("uploadtask",uploadTask);
+    uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(progress);
+        },
+        (err) => {
+          setError(err.message);
+        },
+        () => {
+          //getting product URL and if success thenstoring the product in db
+          storageRef
+            
+            .child(`user-images/${profileImg.name}`)
+            .getDownloadURL()
+            .then((url) => {
+                db.collection('rooms').doc(roomId).collection("profileimages")
+                        .add({
+                            ProfileImg: url,
+                            timestamp : firebase.firestore.FieldValue.serverTimestamp(),
+                          })
+                .then(() => {
+                 
+                  setProfileImg("");
+                  setError("");
+                  document.getElementById("file").value = "";
+                })
+                .catch((err) => setError(err.message));
+            });
+        }
+      );
+}
+
+const toggleAddProfileHandler =()=>{
+    setProfileToggle(!profileToggle);
+}
+
+const removeProfileHandler =(roomId)=>{
+    db.collection("rooms").doc(roomId).collection("profileimages").get()
+    .then(res =>{
+        res.forEach(element =>{
+            element.ref.delete();
+        });
+    });
+    setModalState(false);
+    setModalId(false);
+    
+}
     return (
         <div className="chat">
             <div className="chat__header">
-            <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
+            
+            <Avatar src={displayProfileImg[0] !== null && displayProfileImg[0] !== undefined ? displayProfileImg[0].ProfileImg : ""} onClick={modal1} style={{cursor:"pointer"}}/>
+           
+            <Modal show={modalState} modalClosed={ModalCancelHandler} >
+            <form onSubmit={addProfile} className="profilemodal"> 
 
+            <img  src={displayProfileImg[0] !== null && displayProfileImg[0] !== undefined ? displayProfileImg[0].ProfileImg : ""}/>
+   
+                <br />  
+                      
+                               <input placeholder="none" type="file"   id="file" onChange={profileImgHandler} />
+                                <button  disabled={disableupload}>Upload</button>
+
+                          
+                        
+            </form>
+            <button onClick={()=>removeProfileHandler(roomId)} className="removeprofile">Remove Profile</button>
+            </Modal>
+                
                <div className="chat__headerInfo" >
                    <h3>{roomName}</h3>
                    
 
                      <p>Last Seen at {" "}
-                   {new Date(
-                      messages[messages.length -1] !=null && messages[messages.length -1].timestamp !==null ?  messages[messages.length -1].timestamp.toDate() :""
-                   ).toLocaleTimeString()}
+                   {   messages[messages.length -1] !=null && messages[messages.length -1].timestamp !==null ? 
+            new Date( messages[messages.length -1].timestamp.toDate()).toLocaleTimeString():"00.00.00 AM"}
                     
                    </p>
 

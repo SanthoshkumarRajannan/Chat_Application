@@ -15,13 +15,15 @@ const App=()=> {
   const isAuthdata= localStorage.getItem("Authdata");
    
 
-
- 
+//    const[Darkmode,setDarkmode] = useState(false);
+//  const setMode =()=>{
+//    setDarkmode(!Darkmode);
+//  }
   //const user =userlogin;
 
   //console.log("isAuthdata",isAuthdata)
     return (
-      <div className="App">
+      <div className= "App">
            {/* {  datauser ==null && isAuthdata !=null ?  setLoginUser(isAuthdata)
             : datauser !=null && isAuthdata ==null ? setLoginUser(datauser)
              : datauser !=null && isAuthdata !=null ? setLoginUser(datauser)
@@ -30,8 +32,10 @@ const App=()=> {
          <Login />
         ) : (
           <div className="App_Body">
+           
               <Router> 
-              <Sidebar />
+              
+              <Sidebar  />
                 <Switch>   
                 <Route path="/rooms/:roomId">  
                     <Chat />

@@ -114,3 +114,72 @@
 .chat__headerRight > p:hover{
     box-shadow: 0 2px 3px  rgb(112, 112, 112);
 }
+
+
+.profilemodal{
+    height: 240px;
+    background-color: #f4f1f5;
+    border-radius: 15px;
+    background-image: linear-gradient(to right, rgb(250, 253, 253) 
+    , rgb(102, 163, 153));
+
+}
+
+.profilemodal >img{
+    height:160px;
+    width:160px;
+    float : left;
+    margin-top:20px;
+   margin-left: 200px;
+   border:none;
+   background-image:url("https://upload.wikimedia.org/wikipedia/commons/7/7e/Circle-icons-profile.svg");
+   background-repeat: no-repeat;
+   background-color: #f3f0f0;
+   border-radius: 50% ;
+}
+
+.profilemodal > input{
+    padding:10px;
+   margin-top: 10px;
+  cursor: pointer;
+  
+
+}
+
+
+.profilemodal > button{
+    padding: 10px;
+    background-color: #084116;
+    color:white;
+    border-radius: 8px;
+    border:none;
+    outline:none;
+    float:right;
+    margin-right: 40px;
+    margin-top:-30px;
+    width: 110px;
+    cursor:pointer;
+}
+
+/* input[type="file"]
+{
+    display: none;
+}
+
+.fileupload input.upload{
+    display:inline-block
+} */
+.removeprofile{
+    
+     margin-left:420px;
+     margin-top: -40px;
+     float:right;
+     margin-right:40px;
+     padding:10px;
+     background-color: #dd3719;
+     color:white;
+     border-radius: 8px;
+      border:none;
+      outline :none;
+      cursor:pointer;
+}
