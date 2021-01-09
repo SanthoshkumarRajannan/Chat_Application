@@ -166,7 +166,11 @@ const Chat = () => {
         setModalState(false);
         setModalId(false);  
     }
-
+    
+    const closeHandler =()=>{
+        setModalState(false);
+        setModalId(false); 
+    }
     return (
         <div className="chat">
             <div className="chat__header">
@@ -179,6 +183,7 @@ const Chat = () => {
            
                 <Modal show={modalState} modalClosed={ModalCancelHandler} >
                     <form onSubmit={addProfile} className="profilemodal"> 
+                    <p onClick={closeHandler}>&times;</p>
                         <img  src={displayProfileImg[0] !== null && displayProfileImg[0] !== undefined ? displayProfileImg[0].ProfileImg : ""} alt="" />
                         <br /> 
                         <input placeholder="none" type="file"   id="file" onChange={profileImgHandler} />
