@@ -20,10 +20,10 @@ const Login = () => {
                     user : result.user,
                 })
 
-                const datalogin =[];
-                datalogin.push(result.user);
-                const datavalue=[datalogin[0].photoURL,datalogin[0].displayName]
-                localStorage.setItem('Authdata',datavalue);
+                // const datalogin =[];
+                // datalogin.push(result.user);
+                // const datavalue=[datalogin[0].photoURL,datalogin[0].displayName]
+                // localStorage.setItem('Authdata',datavalue);
             })
            .catch((error) => 
                 alert(error.message));

@@ -1,18 +1,23 @@
 import React,{useEffect,useState}from 'react'
 import './SidebarChat.css'
-
+import {useHistory} from 'react-router-dom';
 import {Avatar,IconButton} from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 
+
 import db from '../../Firebase/Firebase';
+ import storageRef from '../../Firebase/Firebase';
 
 import{Link} from 'react-router-dom';
 
 import Modal from '../../Modal/Modal';
 function SidebarChat({id,name,addNewChat}) {
 
+    const history=useHistory();
+    const [seed ,setSeed]=useState("");
     const [messages,setMessages] = useState("");
-
+   
+    const [deleteAlert,setDeleteAlert] =useState(false);
     const [modalState, setModalState] = useState(false);
     const [modalId, setModalId] = useState();
     const [newRoom,setNewRoom]= useState("");

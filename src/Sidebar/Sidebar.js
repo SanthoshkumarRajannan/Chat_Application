@@ -16,8 +16,8 @@ const Sidebar = () => {
     const [{user},dispatch] = useStateValue();
     const [rooms,setRooms] = useState([]);
 
-    const isAuthdata= localStorage.getItem("Authdata");
-    const Auth=isAuthdata.split(",");
+    // const isAuthdata= localStorage.getItem("Authdata");
+    // const Auth=isAuthdata.split(",");
   
     const [searchRoom,setSearchRoom]=useState("");
 
@@ -50,7 +50,7 @@ const Sidebar = () => {
     return (
         <div className="sidebar">
             <div className="sidebar__header">
-                <Avatar className="profile" src={ user !=null ? user.photoURL : Auth[0]} alt=""   />
+                <Avatar className="profile" src={  user.photoURL } alt=""   />
                 <div className="sidebar__headerRight">
                     <IconButton>
                     <DonutLargeIcon />

@@ -37,14 +37,15 @@ const Chat = () => {
     const [modalState, setModalState] = useState(false);
     const [modalId, setModalId] = useState();
 
+    const [profileToggle,setProfileToggle] = useState(false);
     const[disableupload,setDisableUpload] =useState(true);
-    const isAuthdata=localStorage.getItem("Authdata");
-    const Auth=isAuthdata.split(",");
+    // const isAuthdata=localStorage.getItem("Authdata");
+    // const Auth=isAuthdata.split(",");
 
     useEffect (()=>{
         if(roomId){
-            db.collection("rooms").doc(roomId)
-            .onSnapshot((snapshot) => 
+            db.collection("rooms").doc(roomId).
+            onSnapshot((snapshot) => 
             setRoomName(snapshot.data().name));
     
 
@@ -82,7 +83,7 @@ const Chat = () => {
         db.collection('rooms').doc(roomId).collection("messages")
             .add({
                 message :input,
-                name : user != null ? user.displayName : Auth[1],
+                name :user.displayName,
                 timestamp : firebase.firestore.FieldValue.serverTimestamp(),
             });
         setInput("");
@@ -167,7 +168,7 @@ const Chat = () => {
         setModalId(false);  
     }
     
-    const closeHandler =()=>{
+    const closeHandler=()=>{
         setModalState(false);
         setModalId(false); 
     }
@@ -182,9 +183,10 @@ const Chat = () => {
                     />
            
                 <Modal show={modalState} modalClosed={ModalCancelHandler} >
+                
                     <form onSubmit={addProfile} className="profilemodal"> 
                     <p onClick={closeHandler}>&times;</p>
-                        <img  src={displayProfileImg[0] !== null && displayProfileImg[0] !== undefined ? displayProfileImg[0].ProfileImg : ""} alt="" />
+                        <img  src={displayProfileImg[0] !== null && displayProfileImg[0] !== undefined ? displayProfileImg[0].ProfileImg : ""}/>
                         <br /> 
                         <input placeholder="none" type="file"   id="file" onChange={profileImgHandler} />
                         <button  disabled={disableupload}>Upload</button>           
@@ -216,7 +218,7 @@ const Chat = () => {
 
             <div className="chat__body">
                 {messages.map((message) =>(
-                    <p className={`chat__message ${message.name === (user !==null ? user.displayName : Auth[1]) && "chat__reciever"}`}>
+                    <p className={`chat__message ${message.name === ( user.displayName ) && "chat__reciever"}`}>
                     <span className="chat__name">{message.name}</span>
                        {message.message}
                         <span className="chat__timestamp">
