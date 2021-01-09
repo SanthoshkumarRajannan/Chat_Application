@@ -109,7 +109,7 @@ font-size: 24px;
     flex:0.8;
 }
 
-.sidebar_wrapper .sidebar_delete{
+.sidebar_wrapper .sidebar_verticon{
     flex: 0.2;
     padding-top: 20px;
     padding-bottom: 20px;
@@ -117,12 +117,3 @@ font-size: 24px;
     margin-right:0px;
 }
 
-.sidebar_delete > p{
-    background-color: #d2d2d2;
-    color: black;
-    padding:10px;
-    border-radius: 5px;
-    
-    margin-top: 10px;
-    cursor: pointer;
-}

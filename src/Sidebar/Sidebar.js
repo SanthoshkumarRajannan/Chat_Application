@@ -1,7 +1,6 @@
 import React,{useState,useEffect} from 'react';
 import './Sidebar.css';
 
-
 import db from '../Firebase/Firebase';
 import SidebarChat from './SidebarChat/SidebarChat';
 import { useStateValue } from '../StateProvider';
@@ -12,63 +11,46 @@ import ChatIcon from '@material-ui/icons/Chat'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { SearchOutlined } from '@material-ui/icons';
 
-
 const Sidebar = () => {
-    const [count,setCount]=useState(0);
+  
     const [{user},dispatch] = useStateValue();
     const [rooms,setRooms] = useState([]);
-     const [filterRoom,setFilterRoom]=useState("");
 
-    const [toogleLogout,setToggleLogout]=useState(false);
     const isAuthdata= localStorage.getItem("Authdata");
-   const Auth=isAuthdata.split(",");
+    const Auth=isAuthdata.split(",");
   
-   const [searchRoom,setSearchRoom]=useState("");
+    const [searchRoom,setSearchRoom]=useState("");
 
-useEffect(()=>{
-    //   db.collection("rooms").onSnapshot((snapshot)=>
-    //         setRooms(snapshot.docs.map((doc) =>({
-    //                 id : doc.id,
-    //                 data :doc.data(),
-    //             }))
-    //             )
-    //     );
-
-    db.collection("rooms")
-    .orderBy("name","asc")
-    .onSnapshot((snapshot)=>
-    setRooms(snapshot.docs.map((doc) =>({
-            id : doc.id,
-            data :doc.data(),
-        }))
-        )
-); 
-        
-  },[])
-
- const logoutHandler =()=>{
-     localStorage.setItem("Authdata","");
-     window.location.reload(false);
- }
-
-
- let userlist =rooms;
-    userlist = !searchRoom
-    ? rooms
-    : rooms.filter((room) =>
-        room.data.name.toLowerCase().includes(searchRoom.toLocaleLowerCase()) 
-       
-      );
-
+    useEffect(()=>{
     
- 
+        db.collection("rooms")
+        .orderBy("name","asc")
+        .onSnapshot((snapshot)=>
+        setRooms(snapshot.docs.map((doc) =>({
+                id : doc.id,
+                data :doc.data(),
+            }))
+            )
+        );      
+    },[]);
+
+    const logoutHandler =()=>{
+        localStorage.setItem("Authdata","");
+        window.location.reload(false);
+    }
+
+
+    let userlist =rooms;
+        userlist = !searchRoom
+        ? rooms
+        : rooms.filter((room) =>
+            room.data.name.toLowerCase().includes(searchRoom.toLocaleLowerCase())   
+    );
+
     return (
         <div className="sidebar">
             <div className="sidebar__header">
-              
-                
                 <Avatar className="profile" src={ user !=null ? user.photoURL : Auth[0]} alt=""   />
-               
                 <div className="sidebar__headerRight">
                     <IconButton>
                     <DonutLargeIcon />
@@ -84,26 +66,17 @@ useEffect(()=>{
                     <button  className="logoutButton" onClick={logoutHandler}>
                       LOGOUT
                     </button>
-                    
-                   
-            
-        
-    
-        
-     
-         
-                </div>
-               
-                
-              
+
+                </div> 
             </div>
-            <div className="sidebar__logout">
-           
-            </div>
+
             <div className="sidebar__search">
                   <div className="sidebar__searchContainer">
-                      <SearchOutlined />
-                      <input placeholder="Search chat Room" type="text"   value={searchRoom} onChange={(e)=>setSearchRoom(e.target.value)} />
+                    <SearchOutlined />
+                    <input placeholder="Search chat Room" type="text" 
+                        value={searchRoom} 
+                        onChange={(e)=>setSearchRoom(e.target.value)} 
+                    />
                   </div>
             </div>
             <div className="sidebar__chats">

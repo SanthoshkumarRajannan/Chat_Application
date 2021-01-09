@@ -5,7 +5,7 @@ import {Avatar,IconButton} from '@material-ui/core'
 import SearchOutlined  from '@material-ui/icons/Search'
 import AttachFile from '@material-ui/icons/AttachFile';
 import MoreVert from '@material-ui/icons/MoreVert'
-import { makeStyles } from "@material-ui/core/styles";
+
 import InsertEmoticonIcon  from '@material-ui/icons/InsertEmoticon'
 import MicIcon from '@material-ui/icons/Mic'
  
@@ -16,12 +16,11 @@ import {useParams} from 'react-router-dom';
 import db from '../Firebase/Firebase';
 import Modal from '../Modal/Modal';
 
-import {storage,storageRef} from  '../Firebase/Firebase';
+import {storageRef} from  '../Firebase/Firebase';
 import { useStateValue } from '../StateProvider';
 import firebase from 'firebase';
 const Chat = () => {
 
-    const [seed ,setSeed]=useState("");
     const [input, setInput] = useState("");
     const {roomId} = useParams();
 
@@ -38,16 +37,15 @@ const Chat = () => {
     const [modalState, setModalState] = useState(false);
     const [modalId, setModalId] = useState();
 
-    const [profileToggle,setProfileToggle] = useState(false);
     const[disableupload,setDisableUpload] =useState(true);
     const isAuthdata=localStorage.getItem("Authdata");
     const Auth=isAuthdata.split(",");
+
     useEffect (()=>{
         if(roomId){
-        
-            db.collection("rooms").doc(roomId).
-            onSnapshot((snapshot) => 
-                setRoomName(snapshot.data().name));
+            db.collection("rooms").doc(roomId)
+            .onSnapshot((snapshot) => 
+            setRoomName(snapshot.data().name));
     
 
             db.collection("rooms")
@@ -65,16 +63,7 @@ const Chat = () => {
             .onSnapshot((snapshot)=>
             setdisplayProfileImg(snapshot.docs.map((doc) =>doc.data()))
             );
-
-
-        }
-        
-    },[roomId]);
-    // console.log("profileimage",profileimgage);
-    console.log("messages",messages);
-    console.log("displayprofilepicture",displayProfileImg);
-    useEffect(()=>{
-        setSeed(Math.floor(Math.random() * 5000));
+        }   
     },[roomId]);
 
     const ModalCancelHandler = () => {
@@ -89,72 +78,52 @@ const Chat = () => {
 
 
     const sendMessage =(e)=> {
-e.preventDefault();
-
-
-db.collection('rooms').doc(roomId).collection("messages")
-.add({
-    message :input,
-    name : user != null ? user.displayName : Auth[1],
-    timestamp : firebase.firestore.FieldValue.serverTimestamp(),
-
-});
-
-setInput("");
+        e.preventDefault();
+        db.collection('rooms').doc(roomId).collection("messages")
+            .add({
+                message :input,
+                name : user != null ? user.displayName : Auth[1],
+                timestamp : firebase.firestore.FieldValue.serverTimestamp(),
+            });
+        setInput("");
     }
 
+    const clearMessageHandler =(roomId)=>{
 
-
-
-const clearMessageHandler =(roomId)=>{
-    //  db.collection("rooms").doc(roomId).collection("messages").onSnapshot((snapshot) => 
-    // snapshot.docs.map((doc) =>
-    // db.collection("rooms").doc(roomId).collection(`messages`).doc(doc.id).delete()
-    
-    
-    // ));
-   
        db.collection("rooms").doc(roomId).collection("messages").get()
        .then(res =>{
            res.forEach(element =>{
                element.ref.delete();
            });
-       });
-
-   
-        
-           
-}
+       });          
+    }
 
 
-const profileImgHandler = (e) => {
+    const profileImgHandler = (e) => {
     let selectedFile = e.target.files[0];
-    if (selectedFile && types.includes(selectedFile.type)) {
-      setProfileImg(selectedFile);
-      setError("");
-      setDisableUpload(false);
+        if (selectedFile && types.includes(selectedFile.type)) {
+        setProfileImg(selectedFile);
+        setError("");
+        setDisableUpload(false);
 
-    } else {
-      setProfileImg(null);
-      setError("Please select the valid image type png or jpeg");
-      alert("Please select the valid image type png or jpeg");
-      setDisableUpload(true);
-    }
-    if(selectedFile ===null){
+        } else {
+        setProfileImg(null);
+        setError("Please select the valid image type png or jpeg");
+        alert("Please select the valid image type png or jpeg");
         setDisableUpload(true);
-    }
-  };
+        }
+        if(selectedFile ===null){
+            setDisableUpload(true);
+        }
+    };
 
-const addProfile =(e)=>{
+    const addProfile =(e)=>{
+
     setModalState(false);
-        setModalId(false);
+    setModalId(false);
     e.preventDefault();
-    console.log("profile",profileImg);
     const userImage = profileImg;
-    console.log("USERIMAGE",userImage);
     const uploadTask=storageRef.child(`user-images/${userImage.name}`).put(userImage);
-   // const uploadTask =storage.ref(`user-images/${userImage.name}`).put(userImage);
-    console.log("uploadtask",uploadTask);
     uploadTask.on(
         "state_changed",
         (snapshot) => {
@@ -166,10 +135,8 @@ const addProfile =(e)=>{
           setError(err.message);
         },
         () => {
-          //getting product URL and if success thenstoring the product in db
-          storageRef
-            
-            .child(`user-images/${profileImg.name}`)
+        
+          storageRef.child(`user-images/${profileImg.name}`)
             .getDownloadURL()
             .then((url) => {
                 db.collection('rooms').doc(roomId).collection("profileimages")
@@ -177,95 +144,77 @@ const addProfile =(e)=>{
                             ProfileImg: url,
                             timestamp : firebase.firestore.FieldValue.serverTimestamp(),
                           })
-                .then(() => {
-                 
-                  setProfileImg("");
-                  setError("");
+            .then(() => { 
+                setProfileImg("");
+                setError("");
                   document.getElementById("file").value = "";
                 })
-                .catch((err) => setError(err.message));
+            .catch((err) => 
+                setError(err.message));
             });
         }
       );
-}
+    }
 
-const toggleAddProfileHandler =()=>{
-    setProfileToggle(!profileToggle);
-}
-
-const removeProfileHandler =(roomId)=>{
-    db.collection("rooms").doc(roomId).collection("profileimages").get()
-    .then(res =>{
-        res.forEach(element =>{
-            element.ref.delete();
+    const removeProfileHandler =(roomId)=>{
+        db.collection("rooms").doc(roomId).collection("profileimages").get()
+        .then(res =>{
+            res.forEach(element =>{
+                element.ref.delete();
+            });
         });
-    });
-    setModalState(false);
-    setModalId(false);
-    
-}
+        setModalState(false);
+        setModalId(false);  
+    }
+
     return (
         <div className="chat">
             <div className="chat__header">
             
-            <Avatar src={displayProfileImg[0] !== null && displayProfileImg[0] !== undefined ? displayProfileImg[0].ProfileImg : ""} onClick={modal1} style={{cursor:"pointer"}}/>
+                <Avatar src={displayProfileImg[0] !== null && displayProfileImg[0] !== undefined 
+                        ? displayProfileImg[0].ProfileImg : ""} 
+                        onClick={modal1} 
+                        style={{cursor:"pointer"}}
+                    />
            
-            <Modal show={modalState} modalClosed={ModalCancelHandler} >
-            <form onSubmit={addProfile} className="profilemodal"> 
+                <Modal show={modalState} modalClosed={ModalCancelHandler} >
+                    <form onSubmit={addProfile} className="profilemodal"> 
+                        <img  src={displayProfileImg[0] !== null && displayProfileImg[0] !== undefined ? displayProfileImg[0].ProfileImg : ""} alt="" />
+                        <br /> 
+                        <input placeholder="none" type="file"   id="file" onChange={profileImgHandler} />
+                        <button  disabled={disableupload}>Upload</button>           
+                    </form>
+                    <button onClick={()=>removeProfileHandler(roomId)} className="removeprofile">Remove Profile</button>
+                </Modal>
+                <div className="chat__headerInfo" >
+                    <h3>{roomName}</h3>
+                    <p>Last Seen at {" "}
+                        {messages[messages.length -1] !=null && messages[messages.length -1].timestamp !==null ? 
+                            new Date( messages[messages.length -1].timestamp.toDate()).toLocaleTimeString():"00.00.00 AM"}
+                    </p>
+                </div>
+                <div className="chat__headerRight">
+                    <IconButton>
+                        <SearchOutlined />
+                    </IconButton>
 
-            <img  src={displayProfileImg[0] !== null && displayProfileImg[0] !== undefined ? displayProfileImg[0].ProfileImg : ""}/>
-   
-                <br />  
-                      
-                               <input placeholder="none" type="file"   id="file" onChange={profileImgHandler} />
-                                <button  disabled={disableupload}>Upload</button>
+                    <IconButton>
+                        <AttachFile />
+                    </IconButton>
 
-                          
-                        
-            </form>
-            <button onClick={()=>removeProfileHandler(roomId)} className="removeprofile">Remove Profile</button>
-            </Modal>
-                
-               <div className="chat__headerInfo" >
-                   <h3>{roomName}</h3>
-                   
-
-                     <p>Last Seen at {" "}
-                   {   messages[messages.length -1] !=null && messages[messages.length -1].timestamp !==null ? 
-            new Date( messages[messages.length -1].timestamp.toDate()).toLocaleTimeString():"00.00.00 AM"}
-                    
-                   </p>
-
-               </div>
-               <div className="chat__headerRight">
-                          <IconButton>
-                              <SearchOutlined />
-                          </IconButton>
-
-                          <IconButton>
-                              <AttachFile />
-                          </IconButton>
-
-                          <IconButton>
-                              <MoreVert />
-                          </IconButton>
-                      
-                <p onClick={()=>clearMessageHandler(roomId)}>clearChat</p>
-             
-                          
-               </div>
-              
-               
+                    <IconButton>
+                        <MoreVert />
+                    </IconButton>
+                    <p onClick={()=>clearMessageHandler(roomId)}>clearChat</p>        
+                </div>
             </div>
 
             <div className="chat__body">
                 {messages.map((message) =>(
-             
                     <p className={`chat__message ${message.name === (user !==null ? user.displayName : Auth[1]) && "chat__reciever"}`}>
                     <span className="chat__name">{message.name}</span>
                        {message.message}
                         <span className="chat__timestamp">
-
                             { message.timestamp !==null && new Date(message.timestamp.toDate()).toLocaleTimeString()}
                         </span>
                     </p>
@@ -284,6 +233,7 @@ const removeProfileHandler =(roomId)=>{
                 </form>
                 <MicIcon />
             </div>
+            
         </div>
     )
 }
