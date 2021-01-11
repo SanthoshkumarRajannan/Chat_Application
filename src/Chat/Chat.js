@@ -87,8 +87,9 @@ const Chat = () => {
         db.collection('rooms').doc(roomId).collection("messages")
             .add({
                 message :input,
-                name :user.displayName,
+                name :user !==null ? user.displayName : Auth[1],
                 timestamp : firebase.firestore.FieldValue.serverTimestamp(),
+                uid :user !==null ? user.uid : Auth[2]
             });
         setInput("");
     }
@@ -222,7 +223,7 @@ const Chat = () => {
 
             <div className="chat__body">
                 {messages.map((message) =>(
-                    <p className={`chat__message ${message.name === ( user !==null ? user.displayName : Auth[1]) && "chat__reciever"}`}>
+                    <p className={`chat__message ${message.uid === ( user !==null ? user.uid : Auth[2]) && "chat__reciever"}`}>
                     <span className="chat__name">{message.name}</span>
                        {message.message}
                         <span className="chat__timestamp">

@@ -16,7 +16,7 @@ const Login = () => {
                 console.log("authdata",result.user);
                 const datalogin =[];
                 datalogin.push(result.user);
-                const datavalue=[datalogin[0].photoURL,datalogin[0].displayName]
+                const datavalue=[datalogin[0].photoURL,datalogin[0].displayName,datalogin[0].uid]
 
                // localStorage.setItem('Authdata', JSON.stringify(datalogin));
                 localStorage.setItem('Authdata',datavalue);
