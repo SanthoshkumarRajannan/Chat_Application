@@ -12,9 +12,16 @@ const App=()=> {
   const [{ user} , dispatch] = useStateValue();
 
 //const [user,setLoginUser]=useState("");
-  //const isAuthdata= localStorage.getItem("Authdata");
-   
+ const isAuthdata= localStorage.getItem("Authdata");
 
+ if(isAuthdata !==null){
+  const Auth =isAuthdata.split(",");
+  console.log("isAuthdata",isAuthdata);
+
+ }
+
+  //const isAuthdata=JSON.parse(localStorage.getItem('Authdata'));
+ 
 //    const[Darkmode,setDarkmode] = useState(false);
 //  const setMode =()=>{
 //    setDarkmode(!Darkmode);
@@ -28,7 +35,7 @@ const App=()=> {
             : datauser !=null && isAuthdata ==null ? setLoginUser(datauser)
              : datauser !=null && isAuthdata !=null ? setLoginUser(datauser)
              : setLoginUser("") }   && !isAuthdata*/}
-        { !user ?  (
+        { !user  && !isAuthdata ?  (
          <Login />
         ) : (
           <div className="App_Body">

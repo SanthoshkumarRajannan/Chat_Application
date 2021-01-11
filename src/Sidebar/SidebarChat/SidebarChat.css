@@ -67,7 +67,8 @@ font-size: 24px;
 }
 
 .sidebar__addroom{
-   
+    background-image: linear-gradient(to right, rgb(250, 253, 253) 
+    , rgb(115, 222, 236));
     border-radius: 15px;;
 }
 .sidebar__addroom p{

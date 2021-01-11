@@ -41,7 +41,11 @@ const Chat = () => {
     const[disableupload,setDisableUpload] =useState(true);
     // const isAuthdata=localStorage.getItem("Authdata");
     // const Auth=isAuthdata.split(",");
-
+    let Auth="";
+    const isAuthdata= localStorage.getItem("Authdata");
+    if(isAuthdata !== null){
+         Auth=isAuthdata.split(",");
+    }
     useEffect (()=>{
         if(roomId){
             db.collection("rooms").doc(roomId).
@@ -218,7 +222,7 @@ const Chat = () => {
 
             <div className="chat__body">
                 {messages.map((message) =>(
-                    <p className={`chat__message ${message.name === ( user.displayName ) && "chat__reciever"}`}>
+                    <p className={`chat__message ${message.name === ( user !==null ? user.displayName : Auth[1]) && "chat__reciever"}`}>
                     <span className="chat__name">{message.name}</span>
                        {message.message}
                         <span className="chat__timestamp">

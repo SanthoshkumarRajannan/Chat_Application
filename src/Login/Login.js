@@ -14,16 +14,19 @@ const Login = () => {
        auth.signInWithPopup(provider)
            .then((result) => {
                 console.log("authdata",result.user);
+                const datalogin =[];
+                datalogin.push(result.user);
+                const datavalue=[datalogin[0].photoURL,datalogin[0].displayName]
+
+               // localStorage.setItem('Authdata', JSON.stringify(datalogin));
+                localStorage.setItem('Authdata',datavalue);
                 dispatch({
                     
                     type : actionTypes.SET_USER,
                     user : result.user,
                 })
 
-                // const datalogin =[];
-                // datalogin.push(result.user);
-                // const datavalue=[datalogin[0].photoURL,datalogin[0].displayName]
-                // localStorage.setItem('Authdata',datavalue);
+               
             })
            .catch((error) => 
                 alert(error.message));

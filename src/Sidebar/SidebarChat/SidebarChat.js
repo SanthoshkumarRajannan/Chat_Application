@@ -23,7 +23,7 @@ function SidebarChat({id,name,addNewChat}) {
     const [newRoom,setNewRoom]= useState("");
    
     const [displayProfileImg,setdisplayProfileImg]=useState(""); 
-       
+    
     const ModalCancelHandler = () => {
       setModalState(false);
       setModalId();
